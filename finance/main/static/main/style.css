@@ -1,0 +1,37 @@
+#main {
+    height: 80vh;
+}
+
+#logout {
+    background: none!important;
+    border: none;
+    margin-top: 8px;
+    margin-left: 5px;
+    padding: 0!important;
+
+    /*input has OS specific font-family*/
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#logout:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+#logoutDiv {
+    text-align: right;
+    padding-bottom: 8px;
+}
+
+#menu {
+    margin-left: 35%;
+}
+
+.nav-item {
+    margin-left: 25px;
+}
+
+.nav-item:hover {
+    background-color: #808080; 
+}
