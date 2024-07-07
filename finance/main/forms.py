@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category
+from .models import Category, Debit
 
 # for creating new accounts
 class CreateNewAccount(forms.Form):
@@ -11,3 +11,16 @@ class CreateNewCategory(forms.ModelForm):
     class Meta:
         model = Category
         exclude = ['user']
+
+# custom widget for inputting date
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+# for adding expenses
+class CreateNewDebit(forms.ModelForm):
+    class Meta: 
+        model = Debit
+        exclude = ['user']
+        widgets = {
+            'date': DateInput()
+        }

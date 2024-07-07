@@ -31,8 +31,17 @@ class Category(models.Model):
 # tracking user expenses / debit
 class Debit(models.Model):
     user = models.ForeignKey(User, related_name="debit", null=True, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=False, auto_now_add=False, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    desctiption = models.CharField(max_length=300)
+    description = models.CharField(max_length=300)
     account = models.ForeignKey(Accounts, related_name="acc", null=True, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name="cat", null=True, on_delete=models.PROTECT)
-    
+
+# tracking user earnings / credit
+class Credit(models.Model):
+    user = models.ForeignKey(User, related_name="credit", null=True, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.CharField(max_length=300)
+    account = models.ForeignKey(Accounts, related_name="accCredit", null=True, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, related_name="catCredit", null=True, on_delete=models.PROTECT)
