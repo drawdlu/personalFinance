@@ -32,10 +32,10 @@
             {% else %}
                 <p>Please add accounts to track first</p>
             {% endif %}
-
+            
             <!-- allow user to add categories to track -->
-            <div class="container">
-                <div class="container p-5">
+            <div class="container w-50">
+                <div class="container">
                     <form action="/" class="form-group" method="POST" autocomplete="off">
                         {% csrf_token %}
                         {{ formC | crispy }}
@@ -45,8 +45,8 @@
             </div>
 
             <!-- allow user to add debit/credit to track -->
-            <div class="container">
-                <div class="container p-5">
+            <div class="container w-75 pb-5 pt-3">
+                <div class="container">
                     <form action="/" class="form-control form-control-sm" method="POST" autocomplete="off">
                         {% csrf_token %}
                         {{ formD | crispy }}

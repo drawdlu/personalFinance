@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
+from django import forms
 
 # Create your views here.
 def register(response):

@@ -3,6 +3,7 @@ from .models import Accounts, Category, Debit, Credit
 from .forms import CreateNewAccount, CreateNewCategory, CreateNewDebit
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
+from .helper import get_values
 
 # Create your views here
 
@@ -31,20 +32,16 @@ def home(response):
         if "add_expense" in response.POST:
             # gate data from form and save it 
             if formD.is_valid():
-                amount = formD.cleaned_data["amount"]
-                description = formD.cleaned_data["description"]
-                date = formD.cleaned_data["date"]
-                acc = formD.cleaned_data["account"]
-                ca = formD.cleaned_data["category"]
-                account = Accounts.objects.get(account_name=acc)
-                category = Category.objects.get(category_name=ca)
-                new = Debit(amount=amount, description=description, account=account, category=category, date=date)
+                data = get_values(formD)
+                new = Debit(amount=data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
+
+                account = Accounts.objects.get(account_name=data["account"])
 
                 # create debit
                 response.user.debit.add(new)
                 # update account
-                account.balance -= amount
+                account.balance -= data["amount"]
                 account.save()
             else:
                 print("not valid expense")
@@ -53,23 +50,19 @@ def home(response):
         if "add_credit" in response.POST:
             # gate data from form and save it 
             if formD.is_valid():
-                amount = formD.cleaned_data["amount"]
-                description = formD.cleaned_data["description"]
-                date = formD.cleaned_data["date"]
-                acc = formD.cleaned_data["account"]
-                ca = formD.cleaned_data["category"]
-                account = Accounts.objects.get(account_name=acc)
-                category = Category.objects.get(category_name=ca)
-                new = Credit(amount=amount, description=description, account=account, category=category, date=date)
+                data = get_values(formD)
+                new = Credit(amount=data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
+
+                account = Accounts.objects.get(account_name=data["account"])
 
                 # create debit
                 response.user.credit.add(new)
                 # update account
-                account.balance += amount
+                account.balance += data["amount"]
                 account.save()
             else:
-                print("not valid credit")
+                print("not valid expense")
                 
         return redirect("/")
     

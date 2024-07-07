@@ -5,9 +5,13 @@
 {% load crispy_forms_tags %}
 
 {% block content %} 
-    <form class="form-group" autocomplete="off" method="post">
-        {% csrf_token %}
-        {{ form | crispy}}
-        <button type="submit" class="btn btn-secondary">Login</button>
-    </form> 
+    <div class="container">
+        <div class="container w-50">
+            <form class="form-group" autocomplete="off" method="post">
+                {% csrf_token %}
+                {{ form | crispy}}
+                <button type="submit" class="btn btn-secondary">Login</button>
+            </form>         
+        </div>
+    </div>
 {% endblock %}
