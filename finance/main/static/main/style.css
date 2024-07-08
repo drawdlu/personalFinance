@@ -28,10 +28,31 @@
     margin-left: 35%;
 }
 
+.navbar {
+    background-color: #1B262C;
+}
+
+footer {
+    background-color: #1B262C;    
+}
+
 .nav-item {
     margin-left: 25px;
 }
 
 .nav-item:hover {
     background-color: #808080; 
+}
+
+.loginForm {
+    padding-top: 70px;
+    height: 80vh;
+}
+
+a {
+    text-decoration: none;
+}
+
+.alert {
+    background-color: #BBE1FA;
 }

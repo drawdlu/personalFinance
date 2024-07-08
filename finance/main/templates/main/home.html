@@ -6,9 +6,25 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<!-- alert message for new user -->
+{% if messages %}
+<div class="container alert w-75">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+<!-- alert message for no account -->
+ {% if not user.accounts.all %}
+    <div class="container alert w-75">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        Please add accounts to track 
+    </div>
+{% endif %}
+
     <div class="container">
         <div class="container-md">
-
             <!-- display categories only if category table populated-->
             {% if user.category.all %}
                 <table class="table table-hover table-light">
@@ -28,9 +44,12 @@
                     </tbody>
                 </table>
 
-            <!-- prompt user to add a categories to track first -->
+            <!-- prompt user to add a categories and accounts to track first -->
             {% else %}
-                <p>Please add accounts to track first</p>
+                <div class="container alert w-75">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    Please add categories to track
+                </div>
             {% endif %}
             
             <!-- allow user to add categories to track -->
@@ -87,6 +106,7 @@
                             </table>
                         {% endif %}
                     </div>
+
                     <!-- display credit only if debit/credit table poplulated -->
                     <div class="col">
                         {%if user.debit.all or user.credit.all %}
@@ -115,8 +135,10 @@
                             </table>
                         {% endif %}
                     </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 {% endblock %}
