@@ -66,16 +66,16 @@
             </div>
 
             <!-- allow user to add debit/credit to track -->
-            <div class="container w-75 pb-5 pt-3">
-                <div class="container">
-                    <form action="/" class="form-control form-control-sm" method="POST" autocomplete="off">
-                        {% csrf_token %}
-                        {{ formD | crispy }}
-                        <button name="add_expense" type="submit" class="btn btn-secondary">Add Debit</button>
-                        <button name="add_credit" type="submit" class="btn btn-secondary">Add Credit</button>
-                    </form>
+                <div class="container w-75 pb-5 pt-3">
+                    <div class="container">
+                        <form action="/" class="form-control form-control-sm" method="POST" autocomplete="off">
+                            {% csrf_token %}
+                            {{ formD | crispy }}
+                            <button name="add_expense" type="submit" class="btn btn-secondary">Add Debit</button>
+                            <button name="add_credit" type="submit" class="btn btn-secondary">Add Credit</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
             <!-- expense and earnings tables -->
             <div class="container">
@@ -84,29 +84,40 @@
                     <div class="col">
                         {%if user.debit.all or user.debit.all %}
                             <h4>Debit</h4>
-                            <table class="table table-hover table-light">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        <th>Description</th>
-                                        <th>Category</th>
-                                        <th>Account</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for debit in debitData %}
-                                            <tr>
-                                                <td>{{ debit.date }}</td>
-                                                <td>{{ debit.amount }}</td>
-                                                <td>{{ debit.description }}</td>
-                                                <td>{{ debit.category }}</td>
-                                                <td>{{ debit.account }}</td>
-                                            </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="container text-center">
+                                <table class="table table-hover table-light">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Description</th>
+                                            <th>Category</th>
+                                            <th>Account</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for debit in debitData %}
+                                                <tr>
+                                                    <td>{{ debit.date }}</td>
+                                                    <td>{{ debit.amount }}</td>
+                                                    <td>{{ debit.description }}</td>
+                                                    <td>{{ debit.category }}</td>
+                                                    <td>{{ debit.account }}</td>
+                                                    <td>
+                                                        <form action="/{{ debit.id }}" method="POST">
+                                                            {% csrf_token %}
+                                                            <input hidden  name="debit">
+                                                            <button type="submit" class="btn btn-secondary">Delete</button>
+                                                        </form>                    
+                                                    </td>
+                                                </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         {% endif %}
+                            
                     </div>
 
                     <!-- display credit only if debit/credit table poplulated -->
@@ -131,6 +142,13 @@
                                             <td>{{ credit.description }}</td>
                                             <td>{{ credit.category }}</td>
                                             <td>{{ credit.account }}</td>
+                                            <td>
+                                                <form action="/{{ credit.id }}" method="POST">
+                                                    {% csrf_token %}
+                                                    <input hidden  name="credit">
+                                                    <button type="submit" class="btn btn-secondary">Delete</button>
+                                                </form>                    
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

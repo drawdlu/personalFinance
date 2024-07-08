@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .helper import get_values
 from datetime import datetime
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here
 
@@ -27,8 +28,8 @@ def home(response):
                 # create category
                 try:
                     response.user.category.add(new)
-                except IntegrityError as e:
-                    print(e)
+                except IntegrityError:
+                    messages.info(response, "Category already exists.")
 
         # pressed add expense button
         if "add_expense" in response.POST:
@@ -38,13 +39,13 @@ def home(response):
                 new = Debit(amount=data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
 
-                account = Accounts.objects.get(account_name=data["account"])
-
                 # create debit
                 response.user.debit.add(new)
                 # update account
-                account.balance -= data["amount"]
-                account.save()
+                current = Accounts.objects.get(account_name=data["account"]).balance
+                bal = current - data["amount"]
+                Accounts.objects.filter(account_name=data["account"]).update(balance=bal)
+
             else:
                 print("not valid expense")
 
@@ -98,7 +99,7 @@ def accounts(response):
             try:
                 response.user.accounts.add(new)
             # catch duplicates
-            except IntegrityError as e:
+            except IntegrityError:
                 messages.info(response, "Account already exists")
             
         return redirect("/accounts")
@@ -107,3 +108,20 @@ def accounts(response):
         form = CreateNewAccount()
 
     return render(response, "main/accounts.html", {"form": form})
+
+# deleting data from credit or debit table
+@login_required(login_url="/login/")
+def delete(response, id):
+    
+    # delete transaction
+    try:
+        if "debit" in response.POST:
+            debit = Debit.objects.get(id=id)
+            debit.delete()
+        elif "credit" in response.POST:
+            credit = Credit.objects.get(id=id)
+            credit.delete()
+    except ObjectDoesNotExist:
+        print("test")
+
+    return redirect("/")

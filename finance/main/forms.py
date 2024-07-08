@@ -10,7 +10,7 @@ class CreateNewAccount(forms.Form):
 class CreateNewCategory(forms.ModelForm):
     class Meta:
         model = Category
-        exclude = ['user']
+        fields = ["category_name"]
 
 # custom widget for inputting date
 class DateInput(forms.DateInput):
@@ -20,7 +20,7 @@ class DateInput(forms.DateInput):
 class CreateNewDebit(forms.ModelForm):
     class Meta: 
         model = Debit
-        exclude = ['user']
+        fields = ["date", "amount", "description", "account", "category"]
         widgets = {
             'date': DateInput()
         }
