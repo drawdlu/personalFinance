@@ -4,6 +4,8 @@ from .forms import CreateNewAccount, CreateNewCategory, CreateNewDebit
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .helper import get_values
+from datetime import datetime
+from django.contrib import messages
 
 # Create your views here
 
@@ -69,8 +71,15 @@ def home(response):
     else:
         formC = CreateNewCategory()
         formD = CreateNewDebit()
-    
-    return render(response, "main/home.html", {"formC": formC, "formD":formD})
+
+    # filter and return current months debit and credit
+    date = datetime.now()
+    debitData = Debit.objects.filter(date__year=date.year,
+                                     date__month=date.month)
+    creditData = Credit.objects.filter(date__year=date.year,
+                                       date__month=date.month)
+ 
+    return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData})
 
 # creating new accounts and showing account data
 @login_required(login_url="/login/")
@@ -90,7 +99,7 @@ def accounts(response):
                 response.user.accounts.add(new)
             # catch duplicates
             except IntegrityError as e:
-                print(e)
+                messages.info(response, "Account already exists")
             
         return redirect("/accounts")
     else:

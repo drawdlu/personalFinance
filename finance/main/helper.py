@@ -22,4 +22,4 @@ def get_values(form_data):
     data["category"] = category
 
     return data
-    
+

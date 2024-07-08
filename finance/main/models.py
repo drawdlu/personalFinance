@@ -44,4 +44,4 @@ class Credit(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=300)
     account = models.ForeignKey(Accounts, related_name="accCredit", null=True, on_delete=models.PROTECT)
-    category = models.ForeignKey(Category, related_name="catCredit", null=True, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, related_name="catCredit", null=True, on_delete=models.PROTECT)     

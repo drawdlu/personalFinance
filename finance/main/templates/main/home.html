@@ -6,15 +6,17 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<h2 class="text-center">{% now "F Y" %}</h2>
 <!-- alert message for new user -->
 {% if messages %}
 <div class="container alert w-75">
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
     {% for message in messages %}
-    {{ message }}
+        {{ message }}
     {% endfor %}
 </div>
 {% endif %}
+
 <!-- alert message for no account -->
  {% if not user.accounts.all %}
     <div class="container alert w-75">
@@ -93,14 +95,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for debit in user.debit.all %}
-                                        <tr>
-                                            <td>{{ debit.date }}</td>
-                                            <td>{{ debit.amount }}</td>
-                                            <td>{{ debit.description }}</td>
-                                            <td>{{ debit.category }}</td>
-                                            <td>{{ debit.account }}</td>
-                                        </tr>
+                                    {% for debit in debitData %}
+                                            <tr>
+                                                <td>{{ debit.date }}</td>
+                                                <td>{{ debit.amount }}</td>
+                                                <td>{{ debit.description }}</td>
+                                                <td>{{ debit.category }}</td>
+                                                <td>{{ debit.account }}</td>
+                                            </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -122,7 +124,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for credit in user.credit.all %}
+                                    {% for credit in creditData %}
                                         <tr>
                                             <td>{{ credit.date }}</td>
                                             <td>{{ credit.amount }}</td>
