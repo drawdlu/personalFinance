@@ -79,9 +79,9 @@ def home(response):
 
     # filter and return current months debit and credit
     date = datetime.now()
-    debitData = Debit.objects.filter(date__year=date.year,
+    debitData = response.user.debit.filter(date__year=date.year,
                                      date__month=date.month)
-    creditData = Credit.objects.filter(date__year=date.year,
+    creditData = response.user.credit.filter(date__year=date.year,
                                        date__month=date.month)
  
     return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData})
