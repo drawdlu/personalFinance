@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from .models import Accounts, Category, Debit, Credit
-from .forms import CreateNewAccount, CreateNewCategory, CreateNewDebit
+from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .helper import get_values
 from datetime import datetime
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 # Create your views here
 
@@ -15,7 +16,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def home(response):
     if response.method == "POST":
         formC = CreateNewCategory(response.POST)
-        formD = CreateNewDebit(response.POST)
+        formD = CreateNewEntry(response.POST)
         
         # pressed add category button
         if "add_category" in response.POST:
@@ -35,16 +36,16 @@ def home(response):
         if "add_expense" in response.POST:
             # gate data from form and save it 
             if formD.is_valid():
-                data = get_values(formD)
+                data = get_values(response, formD)
                 new = Debit(amount=data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
 
                 # create debit
                 response.user.debit.add(new)
                 # update account
-                current = Accounts.objects.get(account_name=data["account"]).balance
-                bal = current - data["amount"]
-                Accounts.objects.filter(account_name=data["account"]).update(balance=bal)
+                account = response.user.accounts.get(account_name=data["account"])
+                account.balance -= data["amount"]
+                account.save()
 
             else:
                 print("not valid expense")
@@ -53,15 +54,14 @@ def home(response):
         if "add_credit" in response.POST:
             # gate data from form and save it 
             if formD.is_valid():
-                data = get_values(formD)
+                data = get_values(response, formD)
                 new = Credit(amount=data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
-
-                account = Accounts.objects.get(account_name=data["account"])
 
                 # create debit
                 response.user.credit.add(new)
                 # update account
+                account = response.user.accounts.get(account_name=data["account"])
                 account.balance += data["amount"]
                 account.save()
             else:
@@ -70,8 +70,12 @@ def home(response):
         return redirect("/")
     
     else:
+        # create forms for user
         formC = CreateNewCategory()
-        formD = CreateNewDebit()
+        formD = CreateNewEntry()
+        # make sure forms contains only categories and accounts of current user
+        formD.fields["category"].queryset = response.user.category.all()
+        formD.fields["account"].queryset = response.user.accounts.all()
 
     # filter and return current months debit and credit
     date = datetime.now()

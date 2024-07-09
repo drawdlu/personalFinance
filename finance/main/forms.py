@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category, Debit
+from .models import Category, Debit, Accounts
 
 # for creating new accounts
 class CreateNewAccount(forms.Form):
@@ -17,7 +17,7 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 # for adding expenses
-class CreateNewDebit(forms.ModelForm):
+class CreateNewEntry(forms.ModelForm):
     class Meta: 
         model = Debit
         fields = ["date", "amount", "description", "account", "category"]

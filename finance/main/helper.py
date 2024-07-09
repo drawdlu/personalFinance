@@ -1,7 +1,8 @@
 from .models import Accounts, Category
+from django.http import HttpResponse
 
 # returns a dict of all values from form
-def get_values(form_data):
+def get_values(response, form_data):
     # create dict for holding the form data values
     data = dict.fromkeys(['amount','description', 'date', 'account', 'category'])
     
@@ -11,8 +12,8 @@ def get_values(form_data):
     date = form_data.cleaned_data["date"]
     acc = form_data.cleaned_data["account"]
     ca = form_data.cleaned_data["category"]
-    account = Accounts.objects.get(account_name=acc)
-    category = Category.objects.get(category_name=ca)
+    account = response.user.accounts.get(account_name=acc)
+    category = response.user.category.get(category_name=ca)
 
     # save values to dict and return
     data["amount"] = amount
