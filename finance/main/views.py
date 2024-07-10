@@ -1,15 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import Accounts, Category, Debit, Credit
-from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry
+from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry, EditAccount, EditCategory
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .helper import get_values
 from datetime import datetime
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
-
-# Create your views here
 
 # main page showing current months balance sheet
 @login_required(login_url="/login/")
@@ -17,20 +14,6 @@ def home(response):
     if response.method == "POST":
         formC = CreateNewCategory(response.POST)
         formD = CreateNewEntry(response.POST)
-        
-        # pressed add category button
-        if "add_category" in response.POST:
-        # try to create new category
-            if formC.is_valid():
-                n = formC.cleaned_data["category_name"].upper()
-                new = Category(category_name=n)
-                new.save()
-
-                # create category
-                try:
-                    response.user.category.add(new)
-                except IntegrityError:
-                    messages.info(response, "Category already exists.")
 
         # pressed add expense button
         if "add_expense" in response.POST:
@@ -89,33 +72,97 @@ def home(response):
 # creating new accounts and showing account data
 @login_required(login_url="/login/")
 def accounts(response):
+    userAccounts = response.user.accounts
+    userCategories = response.user.category
+
     # user clicked ADD ACCOUNT
     if response.method == "POST":
-        form = CreateNewAccount(response.POST)
-        # try to create a new account
-        if form.is_valid():
-            n = form.cleaned_data["name"].upper()
-            b = form.cleaned_data["balance"]
-            new = Accounts(account_name=n, balance=b)
-            new.save()
+        # add account button pressed
+        if "addAccount" in response.POST:
+            formA = CreateNewAccount(response.POST)
+            # try to create a new account
+            if formA.is_valid():
+                n = formA.cleaned_data["account_name"].upper()
+                b = formA.cleaned_data["balance"]
+                new = Accounts(account_name=n, balance=b)
+                new.save()
 
-            # create account
+                # create account
+                try:
+                    userAccounts.add(new)
+                # catch duplicates
+                except IntegrityError:
+                    messages.info(response, "Account already exists")
+                
+            return redirect("/accounts")
+        
+        # add category button pressed
+        elif "addCategory" in response.POST:
+            formC = CreateNewCategory(response.POST)
+            if formC.is_valid():
+                n = formC.cleaned_data["category_name"].upper()
+                new = Category(category_name=n)
+                new.save()
+            # create category
             try:
-                response.user.accounts.add(new)
-            # catch duplicates
+                userCategories.add(new)
             except IntegrityError:
-                messages.info(response, "Account already exists")
+                messages.info(response, "Category already exists.")
+
+        # edit account button pressed
+        elif "editAccount" in response.POST:
+            formEditA = EditAccount(userAccounts.all(), response.POST)
+            if formEditA.is_valid():
+                name = formEditA.cleaned_data["name"]
+                newName = formEditA.cleaned_data["newName"]
+                newBalance = formEditA.cleaned_data["newBalance"]
+                account = userAccounts.get(account_name=name)
+
+                # if name is input, update name
+                if newName:
+                    account.account_name = newName.upper()
+                
+                # if balance is input, update balance
+                if newBalance:
+                    account.balance = newBalance
+                
+                # catch user updating to account names that already exist
+                try:
+                    account.save()
+                except IntegrityError:
+                    messages.info(response, "Account with that name already exists")
+
+        # edit category button pressed
+        elif "editCategory" in response.POST:
+            formEditC = EditCategory(userCategories.all(), response.POST)
+            if formEditC.is_valid():
+                name = formEditC.cleaned_data["name"]
+                newName = formEditC.cleaned_data["newName"]
+                category = userCategories.get(category_name=name)
+
+                # update name only if input is given
+                if newName:
+                    category.category_name = newName.upper()
+                
+                # catch names that already exists in users categories
+                try:
+                    category.save()
+                except IntegrityError:
+                    messages.info(response, "Category with that name already exists")
             
         return redirect("/accounts")
     else:
         # returns a form for creating new account data
-        form = CreateNewAccount()
+        formA = CreateNewAccount()
+        formC = CreateNewCategory()
+        formEditA = EditAccount(userAccounts.all())
+        formEditC = EditCategory(userCategories.all())
 
-    return render(response, "main/accounts.html", {"form": form})
+    return render(response, "main/accounts.html", {"formA": formA, "formC": formC, "formEditA": formEditA, "formEditC": formEditC})
 
 # deleting data from credit or debit table
 @login_required(login_url="/login/")
-def delete(response, id):
+def edit(response, id):
     
     # delete transaction
     try:
@@ -126,6 +173,6 @@ def delete(response, id):
             credit = Credit.objects.get(id=id)
             credit.delete()
     except ObjectDoesNotExist:
-        print("test")
+        print("Object does not exist")
 
     return redirect("/")

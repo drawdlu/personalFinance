@@ -2,9 +2,10 @@ from django import forms
 from .models import Category, Debit, Accounts
 
 # for creating new accounts
-class CreateNewAccount(forms.Form):
-    name = forms.CharField(label="Account Name: ", max_length=200)
-    balance = forms.DecimalField(max_digits=13)
+class CreateNewAccount(forms.ModelForm):
+    class Meta:
+        model = Accounts
+        exclude = ['user']
 
 # for creating new categories
 class CreateNewCategory(forms.ModelForm):
@@ -24,3 +25,28 @@ class CreateNewEntry(forms.ModelForm):
         widgets = {
             'date': DateInput()
         }
+
+# for editing accounts
+class EditAccount(forms.Form):
+    def __init__(self, accountList, *args, **kwargs):
+        super(EditAccount, self).__init__(*args, **kwargs)
+        if accountList:
+            self.fields['name'] = forms.ChoiceField(choices=tuple([(name, name) for name in accountList]), initial=None)
+        else:
+            self.fields['name'] = forms.ChoiceField(label="No Accounts Yet", disabled=True)
+    
+    name = forms.ChoiceField()
+    newName = forms.CharField(max_length=200, label="Edit Name", required=False)
+    newBalance = forms.DecimalField(max_digits=13, decimal_places=2, label="Edit Balance", required=False)
+
+# for editing accounts
+class EditCategory(forms.Form):
+    def __init__(self, categoryList, *args, **kwargs):
+        super(EditCategory, self).__init__(*args, **kwargs)
+        if categoryList:
+            self.fields['name'] = forms.ChoiceField(choices=tuple([(name, name) for name in categoryList]), initial=None)
+        else:
+            self.fields['name'] = forms.ChoiceField(label="No Categories Yet", disabled=True)
+    
+    name = forms.ChoiceField()
+    newName = forms.CharField(max_length=200, label="Edit Name")

@@ -7,7 +7,7 @@
 
 {% block content %}
 <h2 class="text-center">{% now "F Y" %}</h2>
-<!-- alert message for new user -->
+<!-- alert message for new user and trying to add categories that are already added -->
 {% if messages %}
 <div class="container alert w-75">
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -17,12 +17,19 @@
 </div>
 {% endif %}
 
-<!-- alert message for no account -->
- {% if not user.accounts.all %}
-    <div class="container alert w-75">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        Please add accounts to track 
-    </div>
+<!-- prompt user to add accounts to track first -->
+{% if not user.accounts.all %}
+<div class="container alert w-75">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    Please add accounts to track 
+</div>
+{% endif %}
+<!-- prompt user to add categories to track first -->
+{% if not user.category.all %}
+<div class="container alert w-75">
+<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+Please add categories to track
+</div>
 {% endif %}
 
     <div class="container">
@@ -45,25 +52,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
-            <!-- prompt user to add a categories and accounts to track first -->
-            {% else %}
-                <div class="container alert w-75">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    Please add categories to track
-                </div>
             {% endif %}
-            
-            <!-- allow user to add categories to track -->
-            <div class="container w-50">
-                <div class="container">
-                    <form action="/" class="form-group" method="POST" autocomplete="off">
-                        {% csrf_token %}
-                        {{ formC | crispy }}
-                        <button name="add_category" type="submit" class="btn btn-secondary">Add Category</button>
-                    </form>
-                </div>
-            </div>
 
             <!-- allow user to add debit/credit to track -->
                 <div class="container w-75 pb-5 pt-3">
@@ -107,7 +96,7 @@
                                                     <form action="/{{ debit.id }}" method="POST">
                                                         {% csrf_token %}
                                                         <input hidden  name="debit">
-                                                        <button type="submit" class="btn btn-secondary">Delete</button>
+                                                        <button type="submit" class="confirm-delete btn btn-secondary">Delete</button>
                                                     </form>                    
                                                 </td>
                                             </tr>
@@ -144,7 +133,7 @@
                                                 <form action="/{{ credit.id }}" method="POST">
                                                     {% csrf_token %}
                                                     <input hidden  name="credit">
-                                                    <button type="submit" class="btn btn-secondary">Delete</button>
+                                                    <button type="submit" class="confirm-delete btn btn-secondary">Delete</button>
                                                 </form>                    
                                             </td>
                                         </tr>
