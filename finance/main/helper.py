@@ -6,7 +6,7 @@ def get_values(response, form_data):
     # create dict for holding the form data values
     data = dict.fromkeys(['amount','description', 'date', 'account', 'category'])
     
-    # extract values
+    # extract values from form
     amount = abs(form_data.cleaned_data["amount"])
     description = form_data.cleaned_data["description"]
     date = form_data.cleaned_data["date"]

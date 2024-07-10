@@ -21,37 +21,62 @@
 {% if not user.accounts.all %}
 <div class="container alert w-75">
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    Please add accounts to track 
+    Please add accounts to track <a href="/accounts/">here</a>
 </div>
 {% endif %}
 <!-- prompt user to add categories to track first -->
 {% if not user.category.all %}
 <div class="container alert w-75">
 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-Please add categories to track
+Please add categories to track <a href="/accounts/">here</a>
 </div>
 {% endif %}
 
     <div class="container">
-        <div class="container-md">
+        <div class="container-lg">
             <!-- display categories only if category table populated-->
             {% if user.category.all %}
-                <table class="table table-hover table-light">
-                    <thead>
-                        <tr>
-                            <th scope="col">Category</th>
-                            <th scope="col">Expense</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for category in user.category.all %}
-                            <tr>
-                                <td>{{ category.category_name }}</td>
-                                <td>{{ account.balance }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="row">
+                    <div class="col">
+                        <h4>Debit</h4>
+                        <table class="table table-hover table-light">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Expense</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category, amount in debitCategory.items %}
+                                    <tr>
+                                        <td>{{ category }}</td>
+                                        <td>{{ amount }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <h4>Credit</h4>
+                        <table class="table table-hover table-light">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Earning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category, amount in creditCategory.items %}
+                                    <tr>
+                                        <td>{{ category }}</td>
+                                        <td>{{ amount }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             {% endif %}
 
             <!-- allow user to add debit/credit to track -->
