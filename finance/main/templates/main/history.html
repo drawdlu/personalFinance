@@ -1,0 +1,149 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+    Transaction History
+{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container">
+        <form action="/history/" class="form-group" method="POST" autocomplete="off">
+            {% csrf_token %}
+            {{ form | crispy}}
+            <button type="submit" class="btn btn-secondary">Display</button>
+        </form>
+
+        <!-- display summary -->
+        <div class="container-fluid pb-5">
+            <h2 class="labels text-center">Summary</h2>
+            {% if user.category.all %}
+                <div class="container-md">
+                    <div class="row">
+                        <div class="col">
+                            <h4>Debit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Expense</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category, amount in debitCategory.items %}
+                                        <tr>
+                                            <td>{{ category }}</td>
+                                            <td>{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold text-sm-end text-lg-center">Total</td>
+                                        <td>{{ debitTotal }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <h4>Credit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Earning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category, amount in creditCategory.items %}
+                                        <tr>
+                                            <td>{{ category }}</td>
+                                            <td>{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold text-sm-end text-lg-center">Total</td>
+                                        <td>{{ creditTotal }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>  
+            {% endif %}
+            </div>
+
+            <!-- transactions tables -->
+            <div class="container-fluid">
+                <h2 class="labels text-center mt-5">Transactions</h2>
+                <div class="row">
+                    <!-- display debit -->
+                    <div class="col p-3">
+                        <h4>Debit</h4>
+                        <table class="table table-hover table-light">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Account</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for debit in debitData %}
+                                        <tr>
+                                            <td>{{ debit.date }}</td>
+                                            <td>{{ debit.amount }}</td>
+                                            <td>{{ debit.description }}</td>
+                                            <td>{{ debit.category }}</td>
+                                            <td>{{ debit.account }}</td>
+                                            <td>
+                                                <form action="/{{ debit.id }}" method="POST">
+                                                    {% csrf_token %}
+                                                    <input hidden  name="debit">
+                                                    <button type="submit" class="confirm-delete btn btn-secondary">Delete</button>
+                                                </form>                    
+                                            </td>
+                                        </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+    
+                    <!-- display credit -->
+                    <div class="col p-3">
+                        <h4>Credit</h4>
+                        <table class="table table-hover table-light">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Account</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for credit in creditData %}
+                                    <tr>
+                                        <td>{{ credit.date }}</td>
+                                        <td>{{ credit.amount }}</td>
+                                        <td>{{ credit.description }}</td>
+                                        <td>{{ credit.category }}</td>
+                                        <td>{{ credit.account }}</td>
+                                        <td>
+                                            <form action="/{{ credit.id }}" method="POST">
+                                                {% csrf_token %}
+                                                <input hidden  name="credit">
+                                                <button type="submit" class="confirm-delete btn btn-secondary">Delete</button>
+                                            </form>                    
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+{% endblock %}

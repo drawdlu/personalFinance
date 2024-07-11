@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import Accounts, Category, Debit, Credit
-from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry, EditAccount, EditCategory
+from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry, EditAccount, EditCategory, ChooseDate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from .helper import get_values
+from .helper import get_values, get_summary
 from datetime import datetime
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -47,9 +47,12 @@ def home(response):
                 print("not valid expense")
 
         # update account
-        account = userAccounts.get(account_name=data["account"])
-        account.balance += new.amount
-        account.save()
+        try:
+            account = userAccounts.get(account_name=data["account"])
+            account.balance += new.amount
+            account.save()
+        except UnboundLocalError:
+            messages.info(response, "Bill Gates?")
                 
         return redirect("/")
     
@@ -68,23 +71,19 @@ def home(response):
     creditData = userCredit.filter(date__year=date.year,
                                        date__month=date.month)
     
+    # get totals using summary, index 0 is for overall total and index 1 is dict of total for each category
     # get total of each category in credit
-    creditCategory = {}
-    for transaction in userCredit.all():
-        if transaction.category not in creditCategory:
-            creditCategory[transaction.category] = transaction.amount
-        else:
-            creditCategory[transaction.category] += transaction.amount
+    creditSummary = get_summary(creditData)
+    creditCategory = creditSummary[1]
+    creditTotal = creditSummary[0]
 
     # get total of each category in debit
-    debitCategory = {}
-    for transaction in userDebit.all():
-        if transaction.category not in debitCategory:
-            debitCategory[transaction.category] = transaction.amount
-        else:
-            debitCategory[transaction.category] += transaction.amount
+    debitSummary = get_summary(debitData)
+    debitCategory = debitSummary[1]
+    debitTotal = debitSummary[0]
+    print(debitTotal)
 
-    return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory})
+    return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory, "debitTotal": debitTotal, "creditTotal": creditTotal})
 
 # creating new accounts and showing account data
 @login_required(login_url="/login/")
@@ -207,4 +206,53 @@ def delete(response, id):
     except ObjectDoesNotExist:
         print("Object does not exist")
 
-    return redirect("/")
+    # redirect to current page user is on
+    return redirect(response.META.get('HTTP_REFERER'))
+
+# for displaying history of transaction per month based on user input
+@login_required(login_url="/login/")
+def history(response):
+    userDates = response.user.monthyear
+    userCredit = response.user.credit
+    userDebit = response.user.debit
+
+    if response.method == "POST":
+        form = ChooseDate(userDates.all(), response.POST)
+        if form.is_valid():
+            date = form.cleaned_data["date"]
+
+            # save date into a datetime format
+            date = datetime.strptime(date, '%Y-%m-%d').date()
+
+            # filter dates
+            debitData = userDebit.filter(date__year=date.year,
+                                    date__month=date.month)
+            
+            creditData = userCredit.filter(date__year=date.year,
+                                                      date__month=date.month)
+
+            # get totals using summary, index 0 is for overall total and index 1 is dict of total for each category
+            # get total of each category in credit
+            creditSummary = get_summary(creditData)
+            creditCategory = creditSummary[1]
+            creditTotal = creditSummary[0]
+
+            # get total of each category in debit
+            debitSummary = get_summary(debitData)
+            debitCategory = debitSummary[1]
+            debitTotal = debitSummary[0]
+
+            # for checking whether to display tables
+            posted = True
+
+    else:
+        posted = False
+        debitData = None
+        creditData = None
+        creditCategory = None
+        debitCategory = None
+        creditTotal = 0
+        debitTotal = 0
+        form = ChooseDate(userDates.all())
+
+    return render(response, "main/history.html", {"form": form, "debitData": debitData, "creditData": creditData, "creditCategory": creditCategory, "debitCategory": debitCategory, "creditTotal": creditTotal, "debitTotal": debitTotal, "posted": posted})

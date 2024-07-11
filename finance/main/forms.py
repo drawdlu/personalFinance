@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category, Debit, Accounts
+from .models import Category, Debit, Accounts, MonthYear
 
 # for creating new accounts
 class CreateNewAccount(forms.ModelForm):
@@ -50,3 +50,14 @@ class EditCategory(forms.Form):
     
     name = forms.ChoiceField()
     newName = forms.CharField(max_length=200, label="Edit Name")
+
+# for choosing which history to display
+class ChooseDate(forms.Form):
+    def __init__(self, dateList, *args, **kwargs):
+        super(ChooseDate, self).__init__(*args, **kwargs)
+        if dateList:
+            self.fields['date'] = forms.ChoiceField(choices=tuple([(date.date.strftime('%Y-%m-%d'), date.date.strftime('%m-%Y')) for date in dateList]), initial=None)
+        else:
+            self.fields['date'] = forms.ChoiceField(label="No Transactions Yet", disabled=True)
+    
+    date = forms.ChoiceField()

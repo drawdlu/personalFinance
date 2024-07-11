@@ -30,18 +30,24 @@
 
 .navbar {
     background-color: #1B262C;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
-footer {
-    background-color: #1B262C;    
+.navbar-brand {
+    font-weight: bold;
 }
 
 .nav-item {
     margin-left: 25px;
+    font-weight: bold;
 }
 
 .nav-item:hover {
-    background: #808080; 
+    background: #0F4C75; 
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
 }
 
 .loginForm {
@@ -55,4 +61,26 @@ a {
 
 .alert {
     background-color: #BBE1FA;
+}
+
+#monthYear {
+    margin: 30px;
+    padding: 20px;
+    background-color: #BBE1FA;
+    border-radius: 10px;
+}
+
+footer {
+    background-color: #1B262C;    
+}
+
+.labels {
+    background-color: #3282B8;
+    color: white;
+    margin-right: 200px;
+    margin-left: 200px;
+    border-radius: 30px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    margin-bottom: 20px
 }

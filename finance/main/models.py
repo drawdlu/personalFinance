@@ -45,3 +45,12 @@ class Credit(models.Model):
     description = models.CharField(max_length=300)
     account = models.ForeignKey(Accounts, related_name="accCredit", null=True, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name="catCredit", null=True, on_delete=models.PROTECT)     
+
+# track months and years with transactions
+class MonthYear(models.Model):
+    user = models.ForeignKey(User, related_name="monthyear", null=True, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=False, auto_now_add=False, null=True)
+
+    # make monthYear unique only to the current user 
+    class Meta:
+        unique_together = 'user', 'date'
