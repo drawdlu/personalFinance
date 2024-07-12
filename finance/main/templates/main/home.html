@@ -91,6 +91,7 @@
         <!-- allow user to add debit/credit to track -->
         <div class="container-md p-5">
             <div class="container p-5">
+                <h3>Add a Transaction</h3>
                 <form action="/" class="form-control form-control-sm" method="POST" autocomplete="off">
                     {% csrf_token %}
                     {{ formD | crispy }}
@@ -105,7 +106,7 @@
             <h2 class="labels text-center">Transactions</h2>
             <div class="row">
                 <!-- display expenses only if debit/credit table poplulated -->
-                <div class="col p-3">
+                <div class="col p-3 transactionTable">
                 {%if user.debit.all or user.credit.all %}
                     <h4>Debit</h4>
                     <table class="table table-hover table-light">
@@ -142,7 +143,7 @@
                 </div>
 
                 <!-- display credit only if debit/credit table poplulated -->
-                <div class="col p-3">
+                <div class="col p-3 transactionTable">
                     {%if user.debit.all or user.credit.all %}
                         <h4>Credit</h4>
                         <table class="table table-hover table-light">

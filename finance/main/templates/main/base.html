@@ -20,13 +20,16 @@
     </head>
     <body>
         <!-- navigation section -->
-        <nav class="navbar navbar-expand-md border-bottom border-body" data-bs-theme="dark">
+        <nav class="navbar navbar-expand-lg border-bottom border-body text-center" data-bs-theme="dark">
             <div class="container-fluid">
-                <a href="/" class="navbar-brand">Finance</a>
+                <a href="/" class="navbar-brand">Finance</a> 
+                {% if user.is_authenticated %}
+                    <p id="userName">Welcome, {{ user.username }}</p>
+                {% endif %}
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse text-right" id="navbarSupportedContent">
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
                     {% if user.is_authenticated %}
                         <ul class="navbar-nav" id="menu">
                             <li class="nav-item">
@@ -38,12 +41,30 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="/accounts">Accounts</a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Search
+                                </a>
+                                <ul class="dropdown-menu" id="searchBar">
+                                    <li>
+                                        <form action="/search/" class="d-flex" method="POST">
+                                            {% csrf_token %}
+                                            <input name="text" class="form-control me-2" type="search" placeholder="Search">
+                                            <button class="btn btn-outline-success" type="submit">Search</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                         <div class="container-fluid" id="logoutDiv">
-                            <form action="{% url 'logout' %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" id="logout">Logout</button>
-                            </form>
+                            <div class="row">
+                                <div class="col-sm p-0">
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" id="logout">Logout</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <ul class="navbar-nav ms-auto">
@@ -60,9 +81,6 @@
         </nav>
 
         <!-- main content -->
-         {% if user.is_authenticated %}
-         <p class="text-center">{{user.username}}</p>
-         {% endif %}
         <div class="container-fluid mt-5" id="main">
             {% block content %}
             {% endblock %}

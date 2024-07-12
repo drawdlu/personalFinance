@@ -35,6 +35,7 @@ def get_values(response, form_data):
 
     return data
 
+# returns a summary of transactions per category
 def get_summary(transactions):
     categoryTotals = {}
     total = 0

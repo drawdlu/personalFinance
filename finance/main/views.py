@@ -81,7 +81,6 @@ def home(response):
     debitSummary = get_summary(debitData)
     debitCategory = debitSummary[1]
     debitTotal = debitSummary[0]
-    print(debitTotal)
 
     return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory, "debitTotal": debitTotal, "creditTotal": creditTotal})
 
@@ -96,6 +95,7 @@ def accounts(response):
         # add account button pressed
         if "addAccount" in response.POST:
             formA = CreateNewAccount(response.POST)
+
             # try to create a new account
             if formA.is_valid():
                 n = formA.cleaned_data["account_name"].upper()
@@ -218,32 +218,36 @@ def history(response):
 
     if response.method == "POST":
         form = ChooseDate(userDates.all(), response.POST)
-        if form.is_valid():
-            date = form.cleaned_data["date"]
+        try:
+            if form.is_valid():
+                date = form.cleaned_data["date"]
 
-            # save date into a datetime format
-            date = datetime.strptime(date, '%Y-%m-%d').date()
+                # save date into a datetime format
+                date = datetime.strptime(date, '%Y-%m-%d').date()
 
-            # filter dates
-            debitData = userDebit.filter(date__year=date.year,
-                                    date__month=date.month)
-            
-            creditData = userCredit.filter(date__year=date.year,
-                                                      date__month=date.month)
+                # filter dates
+                debitData = userDebit.filter(date__year=date.year,
+                                        date__month=date.month)
+                
+                creditData = userCredit.filter(date__year=date.year,
+                                                        date__month=date.month)
 
-            # get totals using summary, index 0 is for overall total and index 1 is dict of total for each category
-            # get total of each category in credit
-            creditSummary = get_summary(creditData)
-            creditCategory = creditSummary[1]
-            creditTotal = creditSummary[0]
+                # get totals using summary, index 0 is for overall total and index 1 is dict of total for each category
+                # get total of each category in credit
+                creditSummary = get_summary(creditData)
+                creditCategory = creditSummary[1]
+                creditTotal = creditSummary[0]
 
-            # get total of each category in debit
-            debitSummary = get_summary(debitData)
-            debitCategory = debitSummary[1]
-            debitTotal = debitSummary[0]
+                # get total of each category in debit
+                debitSummary = get_summary(debitData)
+                debitCategory = debitSummary[1]
+                debitTotal = debitSummary[0]
 
-            # for checking whether to display tables
-            posted = True
+                # for checking whether to display tables
+                posted = True
+        except UnboundLocalError:
+            messages.info(response, "You have no transactions yet")
+            redirect("/history")
 
     else:
         posted = False
@@ -256,3 +260,52 @@ def history(response):
         form = ChooseDate(userDates.all())
 
     return render(response, "main/history.html", {"form": form, "debitData": debitData, "creditData": creditData, "creditCategory": creditCategory, "debitCategory": debitCategory, "creditTotal": creditTotal, "debitTotal": debitTotal, "posted": posted})
+
+# search the database based on user input
+@login_required(login_url="/login/")
+def search(response):
+    userCategory = response.user.category
+    userAccounts = response.user.accounts
+    userDebit = response.user.debit
+    userCredit = response.user.credit
+
+    if response.method == "POST":
+        # get input from search
+        text = response.POST['text']
+        
+        # check if transaction can be found on categories
+        try: 
+            foundCategory = (userCategory.filter(category_name__icontains=text))[0]
+            debitCategory = userDebit.filter(category=foundCategory)
+            creditCategory = userCredit.filter(category=foundCategory)
+        except IndexError:
+            debitCategory = Debit.objects.none()
+            creditCategory = Credit.objects.none()
+        
+        # check if transaction can be found on accounts
+        try: 
+            foundAccounts = (userAccounts.filter(account_name__icontains=text))[0]
+            debitAccounts = userDebit.filter(account=foundAccounts)
+            creditAccounts = userCredit.filter(account=foundAccounts)
+        except IndexError:
+            debitAccounts = Debit.objects.none()
+            creditAccounts = Credit.objects.none()
+
+        # check descriptions
+        foundDebit = (userDebit.filter(description__icontains=text))
+        foundCredit = (userCredit.filter(description__icontains=text))
+
+        # combine all querysets    
+        debitData = foundDebit | debitCategory | debitAccounts
+        creditData = foundCredit | creditCategory | creditAccounts
+
+        # check if found in database
+        if debitData or creditData:
+            return render(response, "main/search.html", {"debitData": debitData, "creditData": creditData})
+        else:
+            # return message if no data found
+            messages.info(response, "Nothing Found")
+            return redirect(response.META.get('HTTP_REFERER'))
+    
+    # if url typed on page
+    return redirect('/')

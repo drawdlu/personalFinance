@@ -1,88 +1,12 @@
 {% extends "main/base.html" %}
 
 {% block title %}
-    Transaction History
+    Search
 {% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <!-- for alert messages-->
-    {% if messages %}
-    <div class="container alert w-75">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <div class="container p-5">
-        {% if user.debit.all or user.credit.all %}
-            <form action="/history/" class="form-group" method="POST" autocomplete="off">
-                {% csrf_token %}
-                {{ form | crispy}}
-                <button type="submit" class="btn btn-secondary">Display</button>
-            </form>
-        {% else %}
-            <h3 id="noTransactions" class="text-center">No transactions available</h3>
-        {% endif %}
-    </div>
-
-    <!-- display summary -->
-    <div class="container-fluid pb-5">
-        <h2 class="labels text-center">Summary</h2>
-            <div class="container-md">
-                <div class="row">
-                    <div class="col">
-                        <h4>Debit</h4>
-                        <table class="table table-hover table-light">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Expense</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for category, amount in debitCategory.items %}
-                                    <tr>
-                                        <td>{{ category }}</td>
-                                        <td>{{ amount }}</td>
-                                    </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td class="fw-bold text-sm-end text-lg-center">Total</td>
-                                    <td>{{ debitTotal }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col">
-                        <h4>Credit</h4>
-                        <table class="table table-hover table-light">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Earning</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for category, amount in creditCategory.items %}
-                                    <tr>
-                                        <td>{{ category }}</td>
-                                        <td>{{ amount }}</td>
-                                    </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td class="fw-bold text-sm-end text-lg-center">Total</td>
-                                    <td>{{ creditTotal }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>  
-        </div>
-
+    {% if debitData or creditData %}
         <!-- transactions tables -->
         <div class="container-fluid">
             <h2 class="labels text-center mt-5">Transactions</h2>
@@ -158,5 +82,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    {% else %}
+        nothing found
+    {% endif %}
 {% endblock %}
