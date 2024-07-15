@@ -15,7 +15,6 @@
         {% load static %}
         <link rel="stylesheet" href="{% static 'main/style.css' %}">
         <script src="{% static 'main/scripts.js' %}"></script>
-
     </head>
     </head>
     <body>
@@ -55,16 +54,15 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="nav-item">
+                                <a href="/profile" class="nav-link">Profile</a>
+                            </li>
                         </ul>
-                        <div class="container-fluid" id="logoutDiv">
-                            <div class="row">
-                                <div class="col-sm p-0">
-                                    <form action="{% url 'logout' %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" id="logout">Logout</button>
-                                    </form>
-                                </div>
-                            </div>
+                        <div class="container-fluid pb-2" id="logoutDiv">
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" id="logout">Logout</button>
+                            </form>
                         </div>
                     {% else %}
                         <ul class="navbar-nav ms-auto">

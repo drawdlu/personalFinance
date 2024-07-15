@@ -1,0 +1,15 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+    Progile Page
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="container">
+            Username: {{ userName }} <br>
+            Email: {{ email }} <br>
+            <a href="/change_password/">Change Password</a>
+        </div>
+    </div>
+{% endblock %}
