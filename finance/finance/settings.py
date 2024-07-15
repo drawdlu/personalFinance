@@ -126,8 +126,21 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# for crispy form usage
 CRISPY_TEMPLATE_PACK="bootstrap5"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
+# login and logout redirect
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login"
+
+# email setup
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_FROM = 'apptestcontrol@gmail.com'
+EMAIL_HOST_USER = 'apptestcontrol@gmail.com'
+EMAIL_HOST_PASSWORD = 'tefu imzo tgmw lrlt'
+EMAIL_PORT = 587
+
+PASSWORD_RESET_TIMEOUT = 14400 

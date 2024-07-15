@@ -5,6 +5,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %} 
+    <!-- for alert messages-->
+    {% if messages %}
+    <div class="container alert w-75">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    
     <div class="container loginForm">
         <div class="container w-75 p-5">
             <h1 class="text-center pb-3">Login</h1>

@@ -16,7 +16,7 @@ class RegisterForm(UserCreationForm): # inherits attributes of UserCreationForm
         self.fields['email'].required = True
         self.fields['email'].label = "Email Address"
     
-    # check if email is unique to user
+    # make sure email is unique to user
     def clean(self):
        email = self.cleaned_data.get('email')
        if User.objects.filter(email=email).exists():
