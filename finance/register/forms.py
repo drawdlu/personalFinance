@@ -38,6 +38,7 @@ class PasswordResetForm(PasswordResetForm):
 
 class ChangeCurrency(forms.Form):
     currency_choices = (
+        ("", "--------"),
         ("$", "Dollar"), 
         ("€", "Euro"), 
         ("£", "Pound"),

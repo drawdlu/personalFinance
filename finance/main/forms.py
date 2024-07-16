@@ -31,7 +31,10 @@ class EditAccount(forms.Form):
     def __init__(self, accountList, *args, **kwargs):
         super(EditAccount, self).__init__(*args, **kwargs)
         if accountList:
-            self.fields['name'] = forms.ChoiceField(choices=tuple([(name, name) for name in accountList]), initial=None)
+            namesA = (('', '-----------'),)
+            namesB = tuple([(name, name) for name in accountList])
+            allNames = namesA + namesB
+            self.fields['name'] = forms.ChoiceField(choices=allNames, initial=None)
         else:
             self.fields['name'] = forms.ChoiceField(label="No Accounts Yet", disabled=True)
     
@@ -44,7 +47,10 @@ class EditCategory(forms.Form):
     def __init__(self, categoryList, *args, **kwargs):
         super(EditCategory, self).__init__(*args, **kwargs)
         if categoryList:
-            self.fields['name'] = forms.ChoiceField(choices=tuple([(name, name) for name in categoryList]), initial=None)
+            namesA = (('', '-----------'),)
+            namesB = tuple([(name, name) for name in categoryList])
+            allNames = namesA + namesB
+            self.fields['name'] = forms.ChoiceField(choices=allNames, initial=None)
         else:
             self.fields['name'] = forms.ChoiceField(label="No Categories Yet", disabled=True)
     
@@ -56,7 +62,10 @@ class ChooseDate(forms.Form):
     def __init__(self, dateList, *args, **kwargs):
         super(ChooseDate, self).__init__(*args, **kwargs)
         if dateList:
-            self.fields['date'] = forms.ChoiceField(choices=tuple([(date.date.strftime('%Y-%m-%d'), date.date.strftime('%m-%Y')) for date in dateList]), initial=None)
+            datesA = tuple([(date.date.strftime('%Y-%m-%d'), date.date.strftime('%m-%Y')) for date in dateList])
+            datesB = (('', '-----------'),)
+            allDates = datesB + datesA
+            self.fields['date'] = forms.ChoiceField(choices=allDates, initial=None)
         else:
             self.fields['date'] = forms.ChoiceField(label="No Transactions Yet", disabled=True)
     

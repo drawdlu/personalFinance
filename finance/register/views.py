@@ -80,8 +80,8 @@ def register(response):
 def profile(response):
     userName = response.user.username
     email = response.user.email
-    symbols = {"Dollar": '$', "Euro": '€', "Pound": '£', "Yen": '¥', "Franc": '₣', "Rupee": '₹', "Dinar": 'د. ك', "Peso": '₱'}
 
+    # update currency used
     if response.method == 'POST':
         form = ChangeCurrency(response.POST)
         if form.is_valid():
