@@ -3,6 +3,7 @@
 {% block title %}
     Progile Page
 {% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <div class="container">
@@ -12,4 +13,9 @@
             <a href="/change_password/">Change Password</a>
         </div>
     </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <button type="submit" class="btn btn-success">Change</button>
+    </form>
 {% endblock %}

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
+from main.models import UserProfile
 
 class RegisterForm(UserCreationForm): # inherits attributes of UserCreationForm
 
@@ -33,4 +34,17 @@ class SetPasswordForm(SetPasswordForm):
 class PasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         super(PasswordResetForm, self).__init__(*args, **kwargs)
-    
+
+
+class ChangeCurrency(forms.Form):
+    currency_choices = (
+        ("$", "Dollar"), 
+        ("€", "Euro"), 
+        ("£", "Pound"),
+        ("¥", "Yen"),
+        ("₣", "Franc"),
+        ("₹", "Rupee"),
+        ("د. ك'", "Dinar"),
+        ("₱", "Peso")
+    )
+    currency = forms.ChoiceField(choices=currency_choices)

@@ -53,3 +53,7 @@ class MonthYear(models.Model):
     # make monthYear unique only to the current user 
     class Meta:
         unique_together = 'user', 'date'
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, related_name="profile", null=True, on_delete=models.CASCADE)
+    currency = models.CharField(max_length=3, default='$')

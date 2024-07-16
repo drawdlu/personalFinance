@@ -46,7 +46,7 @@ Please add categories to track
                     {% for account in user.accounts.all %}
                         <tr>
                             <td>{{ account.account_name }}</td>
-                            <td>{{ account.balance }}</td>
+                            <td>{{ user.profile.currency }}{{ account.balance }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

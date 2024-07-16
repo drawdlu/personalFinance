@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, SetPasswordForm, PasswordResetForm
+from .forms import RegisterForm, SetPasswordForm, PasswordResetForm, ChangeCurrency
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -12,6 +12,7 @@ from django.core.mail import EmailMessage
 from .token import account_activation_token
 from django.contrib.auth.decorators import login_required
 from django.db.models.query_utils import Q
+from main.models import UserProfile
 
 # activate when link is pressed
 def activate(response, uidb64, token):
@@ -52,13 +53,23 @@ def emailActivation(response, new_user, to_email):
 
 # register new user
 def register(response):
+    # handle instances when user types this on url while logged in
+    if response.user.is_authenticated:
+        return redirect('/')
+    
     if response.method == "POST":
         form = RegisterForm(response.POST)
         if form.is_valid():
+            # create new user and send email
             new_user = form.save(commit=False)
             new_user.is_active=False
             new_user.save()
             emailActivation(response, new_user, form.cleaned_data.get('email'))
+
+            # create user profile
+            new = UserProfile(user=new_user)
+            new.save()
+
             return redirect("/")
     else: 
         form = RegisterForm()
@@ -69,7 +80,18 @@ def register(response):
 def profile(response):
     userName = response.user.username
     email = response.user.email
-    return render(response, "profile.html", {"userName": userName, "email": email})
+    symbols = {"Dollar": '$', "Euro": '€', "Pound": '£', "Yen": '¥', "Franc": '₣', "Rupee": '₹', "Dinar": 'د. ك', "Peso": '₱'}
+
+    if response.method == 'POST':
+        form = ChangeCurrency(response.POST)
+        if form.is_valid():
+            symbol = form.cleaned_data['currency']
+            response.user.profile.currency = symbol
+            response.user.profile.save()
+    else:
+        form = ChangeCurrency()
+
+    return render(response, "profile.html", {"userName": userName, "email": email, "form": form})
 
 # allow users to change password
 @login_required(login_url="/login/")
@@ -91,6 +113,10 @@ def change_password(response):
 
 # allow users to change password through their email
 def password_reset(response):
+    # handle instances when user types this on url while logged in
+    if response.user.is_authenticated:
+        return redirect('/')
+        
     if response.method == 'POST':
         form = PasswordResetForm(response.POST)
         if form.is_valid():

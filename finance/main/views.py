@@ -299,6 +299,10 @@ def search(response):
         debitData = foundDebit | debitCategory | debitAccounts
         creditData = foundCredit | creditCategory | creditAccounts
 
+        # put most recent transactions in front
+        debitData.order_by('-date').values()
+        creditData.order_by('-date').values()
+
         # check if found in database
         if debitData or creditData:
             return render(response, "main/search.html", {"debitData": debitData, "creditData": creditData})

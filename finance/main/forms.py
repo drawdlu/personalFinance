@@ -61,3 +61,4 @@ class ChooseDate(forms.Form):
             self.fields['date'] = forms.ChoiceField(label="No Transactions Yet", disabled=True)
     
     date = forms.ChoiceField()
+
