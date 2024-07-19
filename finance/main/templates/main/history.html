@@ -83,6 +83,55 @@
             </div>  
         </div>
 
+        <div class="container">
+            <h2 class="labels text-center">Accounts Summary</h2>
+            {% if user.category.all %}
+                <!-- display categories only if category table populated-->
+                <div class="container-md">
+                    <div class="row">
+                        <div class="col">
+                            <h4>Debit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Account</th>
+                                        <th scope="col">Expense</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account, amount in debitAccounts.items %}
+                                        <tr>
+                                            <td>{{ account }}</td>
+                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <h4>Credit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Account</th>
+                                        <th scope="col">Earning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account, amount in creditAccounts.items %}
+                                        <tr>
+                                            <td>{{ account }}</td>
+                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>  
+            {% endif %}
+        </div>
+
         <!-- transactions tables -->
         <div class="container-fluid">
             <h2 class="labels text-center mt-5">Transactions</h2>

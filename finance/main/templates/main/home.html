@@ -33,60 +33,112 @@
 {% endif %}
 
     <div class="container-fluid">
-        <h2 class="labels text-center">Summary</h2>
-        {% if user.category.all %}
-            <!-- display categories only if category table populated-->
-            <div class="container-md">
-                <div class="row">
-                    <div class="col">
-                        <h4>Debit</h4>
-                        <table class="table table-hover table-light">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Expense</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for category, amount in debitCategory.items %}
+        <div class="container pt-3 pb-5">
+            <h2 class="labels text-center">Balance Sheet</h2>
+            {% if user.category.all %}
+                <!-- display categories only if category table populated-->
+                <div class="container-md">
+                    <div class="row">
+                        <div class="col">
+                            <h4>Debit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
                                     <tr>
-                                        <td>{{ category }}</td>
-                                        <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Expense</th>
                                     </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td class="fw-bold text-sm-end text-lg-center">Total</td>
-                                    <td>{{ user.profile.currency }}{{ debitTotal }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col">
-                        <h4>Credit</h4>
-                        <table class="table table-hover table-light">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Earning</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for category, amount in creditCategory.items %}
+                                </thead>
+                                <tbody>
+                                    {% for category, amount in debitCategory.items %}
+                                        <tr>
+                                            <td>{{ category }}</td>
+                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
                                     <tr>
-                                        <td>{{ category }}</td>
-                                        <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        <td class="fw-bold text-sm-end text-lg-center">Total</td>
+                                        <td>{{ user.profile.currency }}{{ debitTotal }}</td>
                                     </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td class="fw-bold text-sm-end text-lg-center">Total</td>
-                                    <td>{{ user.profile.currency }}{{ creditTotal }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <h4>Credit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Earning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category, amount in creditCategory.items %}
+                                        <tr>
+                                            <td>{{ category }}</td>
+                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="fw-bold text-sm-end text-lg-center">Total</td>
+                                        <td>{{ user.profile.currency }}{{ creditTotal }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </div>  
-        {% endif %}
+                </div>  
+            {% endif %}
+        </div>
+        
+        
+        <div class="container">
+            <h2 class="labels text-center">Accounts Summary</h2>
+            {% if user.category.all %}
+                <!-- display categories only if category table populated-->
+                <div class="container-md">
+                    <div class="row">
+                        <div class="col">
+                            <h4>Debit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Account</th>
+                                        <th scope="col">Expense</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account, amount in debitAccounts.items %}
+                                        <tr>
+                                            <td>{{ account }}</td>
+                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <h4>Credit</h4>
+                            <table class="table table-hover table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Account</th>
+                                        <th scope="col">Earning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account, amount in creditAccounts.items %}
+                                        <tr>
+                                            <td>{{ account }}</td>
+                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>  
+            {% endif %}
+        </div>
 
         <!-- allow user to add debit/credit to track -->
         <div class="container-md p-5">

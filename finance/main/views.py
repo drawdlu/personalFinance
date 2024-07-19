@@ -71,18 +71,20 @@ def home(response):
     creditData = userCredit.filter(date__year=date.year,
                                        date__month=date.month)
     
-    # get totals using summary, index 0 is for overall total and index 1 is dict of total for each category
-    # get total of each category in credit
+    # get totals using summary, index 0 is for overall total, index 1 is a dict of total for each category, index 2 is a dict for total for every account each month
+    # get total of each category and accounts in credit
     creditSummary = get_summary(creditData)
-    creditCategory = creditSummary[1]
     creditTotal = creditSummary[0]
+    creditCategory = creditSummary[1]
+    creditAccounts = creditSummary[2]
 
-    # get total of each category in debit
+    # get total of each category and accounts in debit
     debitSummary = get_summary(debitData)
-    debitCategory = debitSummary[1]
     debitTotal = debitSummary[0]
+    debitCategory = debitSummary[1]
+    debitAccounts = debitSummary[2]
 
-    return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory, "debitTotal": debitTotal, "creditTotal": creditTotal})
+    return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory, "debitTotal": debitTotal, "creditTotal": creditTotal, "creditAccounts": creditAccounts, "debitAccounts": debitAccounts})
 
 # creating new accounts and showing account data
 @login_required(login_url="/login/")
@@ -232,16 +234,19 @@ def history(response):
                 creditData = userCredit.filter(date__year=date.year,
                                                         date__month=date.month)
 
-                # get totals using summary, index 0 is for overall total and index 1 is dict of total for each category
-                # get total of each category in credit
+                # get totals using summary, index 0 is for overall total, index 1 is a dict of total for each category, index 2 is a dict for total for every account each month
+                # get total of each category and accounts in credit
                 creditSummary = get_summary(creditData)
-                creditCategory = creditSummary[1]
                 creditTotal = creditSummary[0]
+                creditCategory = creditSummary[1]
+                creditAccounts = creditSummary[2]
 
-                # get total of each category in debit
+                # get total of each category and accounts in debit
                 debitSummary = get_summary(debitData)
-                debitCategory = debitSummary[1]
                 debitTotal = debitSummary[0]
+                debitCategory = debitSummary[1]
+                debitAccounts = debitSummary[2]
+                
 
                 # for checking whether to display tables
                 posted = True
@@ -255,11 +260,13 @@ def history(response):
         creditData = None
         creditCategory = None
         debitCategory = None
+        creditAccounts = None
+        debitAccounts = None
         creditTotal = 0
         debitTotal = 0
         form = ChooseDate(userDates.all())
 
-    return render(response, "main/history.html", {"form": form, "debitData": debitData, "creditData": creditData, "creditCategory": creditCategory, "debitCategory": debitCategory, "creditTotal": creditTotal, "debitTotal": debitTotal, "posted": posted})
+    return render(response, "main/history.html", {"form": form, "debitData": debitData, "creditData": creditData, "creditCategory": creditCategory, "debitCategory": debitCategory, "creditTotal": creditTotal, "debitTotal": debitTotal, "creditAccounts": creditAccounts, "debitAccounts": debitAccounts, "posted": posted})
 
 # search the database based on user input
 @login_required(login_url="/login/")

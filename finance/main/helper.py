@@ -35,9 +35,10 @@ def get_values(response, form_data):
 
     return data
 
-# returns a summary of transactions per category
+# returns a summary of transactions per category, and accounts
 def get_summary(transactions):
     categoryTotals = {}
+    accountTotals = {}
     total = 0
 
     for transaction in transactions:
@@ -47,4 +48,9 @@ def get_summary(transactions):
             categoryTotals[transaction.category] += transaction.amount
         total += transaction.amount
 
-    return [total, categoryTotals]
+        if transaction.account not in accountTotals:
+            accountTotals[transaction.account] = transaction.amount
+        else:
+            accountTotals[transaction.account] += transaction.amount
+
+    return [total, categoryTotals, accountTotals]
