@@ -117,3 +117,7 @@ footer {
 #passwordReset {
     height: 60vh;
 }
+
+#emailReset {
+    height: 70vh;
+}
