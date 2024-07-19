@@ -1,0 +1,35 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+    Progile Page
+{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container" id="profilePage">
+        <div class="container m-5">
+            <h2>Profile Data</h2>
+            <div class="container">
+                <div class="container p-2">
+                    <b>Username:</b> {{ user.username }}
+                </div>
+                <div class="container p-2">
+                    <b>Email:</b> {{ user.email }}
+                </div>
+                <div class="container p-2">
+                    <a href="/change_password/">Change Password</a>
+                </div>
+            </div>
+        </div>
+        <div class="container m-5">
+            <h3>Change your preferred currency here</h3>
+            <div class="container w-25 float-left" id="currency">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <button type="submit" class="btn btn-success">Change</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

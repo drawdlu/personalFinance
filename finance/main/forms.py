@@ -71,3 +71,18 @@ class ChooseDate(forms.Form):
     
     date = forms.ChoiceField()
 
+
+class ChangeCurrency(forms.Form):
+    currency_choices = (
+        ("", "--------"),
+        ("$", "Dollar"), 
+        ("€", "Euro"), 
+        ("£", "Pound"),
+        ("¥", "Yen"),
+        ("₣", "Franc"),
+        ("₹", "Rupee"),
+        ("د. ك'", "Dinar"),
+        ("₱", "Peso")
+    )
+    currency = forms.ChoiceField(choices=currency_choices)
+

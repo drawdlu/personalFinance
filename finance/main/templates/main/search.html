@@ -3,6 +3,7 @@
 {% block title %}
     Search
 {% endblock %}
+{% load mathfilters %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -29,7 +30,7 @@
                             {% for debit in debitData %}
                                     <tr>
                                         <td>{{ debit.date }}</td>
-                                        <td>{{ user.profile.currency }}{{ debit.amount }}</td>
+                                        <td>-{{ user.profile.currency }}{{ debit.amount|abs }}</td>
                                         <td>{{ debit.description }}</td>
                                         <td>{{ debit.category }}</td>
                                         <td>{{ debit.account }}</td>

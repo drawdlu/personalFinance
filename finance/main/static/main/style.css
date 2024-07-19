@@ -105,3 +105,15 @@ footer {
 .dropdown-menu {
     --bs-dropdown-min-width: 20rem;
 }
+
+#currency {
+    margin-left: 0px;
+}
+
+#profilePage {
+    height: 60vh;
+}
+
+#passwordReset {
+    height: 60vh;
+}

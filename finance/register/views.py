@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, SetPasswordForm, PasswordResetForm, ChangeCurrency
+from .forms import RegisterForm, SetPasswordForm, PasswordResetForm
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -74,24 +74,6 @@ def register(response):
     else: 
         form = RegisterForm()
     return render(response, "register.html", {"form": form})
-
-# display profile page
-@login_required(login_url="/login/")
-def profile(response):
-    userName = response.user.username
-    email = response.user.email
-
-    # update currency used
-    if response.method == 'POST':
-        form = ChangeCurrency(response.POST)
-        if form.is_valid():
-            symbol = form.cleaned_data['currency']
-            response.user.profile.currency = symbol
-            response.user.profile.save()
-    else:
-        form = ChangeCurrency()
-
-    return render(response, "profile.html", {"userName": userName, "email": email, "form": form})
 
 # allow users to change password
 @login_required(login_url="/login/")

@@ -3,6 +3,7 @@
 {% block title %}
     Transaction History
 {% endblock %}
+{% load mathfilters %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -46,12 +47,12 @@
                                 {% for category, amount in debitCategory.items %}
                                     <tr>
                                         <td>{{ category }}</td>
-                                        <td>{{ user.profile.currency }}{{ amount }}</td>
+                                        <td>-{{ user.profile.currency }}{{ amount|abs }}</td>
                                     </tr>
                                 {% endfor %}
                                 <tr>
                                     <td class="fw-bold text-sm-end text-lg-center">Total</td>
-                                    <td>{{ user.profile.currency }}{{ debitTotal }}</td>
+                                    <td>-{{ user.profile.currency }}{{ debitTotal|abs }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -102,7 +103,7 @@
                                     {% for account, amount in debitAccounts.items %}
                                         <tr>
                                             <td>{{ account }}</td>
-                                            <td>{{ user.profile.currency }}{{ amount }}</td>
+                                            <td>-{{ user.profile.currency }}{{ amount|abs }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -154,7 +155,7 @@
                             {% for debit in debitData %}
                                     <tr>
                                         <td>{{ debit.date }}</td>
-                                        <td>{{ user.profile.currency }}{{ debit.amount }}</td>
+                                        <td>-{{ user.profile.currency }}{{ debit.amount|abs }}</td>
                                         <td>{{ debit.description }}</td>
                                         <td>{{ debit.category }}</td>
                                         <td>{{ debit.account }}</td>

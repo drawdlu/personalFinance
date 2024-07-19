@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Accounts, Category, Debit, Credit
-from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry, EditAccount, EditCategory, ChooseDate
+from .forms import CreateNewAccount, CreateNewCategory, CreateNewEntry, EditAccount, EditCategory, ChooseDate, ChangeCurrency
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .helper import get_values, get_summary
@@ -17,14 +17,12 @@ def home(response):
     userCredit = response.user.credit
 
     if response.method == "POST":
-        formC = CreateNewCategory(response.POST)
-        formD = CreateNewEntry(response.POST)
-
+        form = CreateNewEntry(response.POST)
         # pressed add expense button
         if "add_expense" in response.POST:
             # gate data from form and save it 
-            if formD.is_valid():
-                data = get_values(response, formD)
+            if form.is_valid():
+                data = get_values(response, form)
                 new = Debit(amount=-data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
 
@@ -36,8 +34,8 @@ def home(response):
         # pressed add credit button
         if "add_credit" in response.POST:
             # gate data from form and save it 
-            if formD.is_valid():
-                data = get_values(response, formD)
+            if form.is_valid():
+                data = get_values(response, form)
                 new = Credit(amount=data["amount"], description=data["description"], account=data["account"], category=data["category"], date=data["date"])
                 new.save()
 
@@ -58,11 +56,10 @@ def home(response):
     
     else:
         # create forms for user
-        formC = CreateNewCategory()
-        formD = CreateNewEntry()
+        form = CreateNewEntry()
         # make sure forms contains only categories and accounts of current user
-        formD.fields["category"].queryset = userCategories.all()
-        formD.fields["account"].queryset = userAccounts.all()
+        form.fields["category"].queryset = userCategories.all()
+        form.fields["account"].queryset = userAccounts.all()
 
     # filter and return current months debit and credit
     date = datetime.now()
@@ -84,7 +81,7 @@ def home(response):
     debitCategory = debitSummary[1]
     debitAccounts = debitSummary[2]
 
-    return render(response, "main/home.html", {"formC": formC, "formD":formD, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory, "debitTotal": debitTotal, "creditTotal": creditTotal, "creditAccounts": creditAccounts, "debitAccounts": debitAccounts})
+    return render(response, "main/home.html", {"form": form, "debitData": debitData, "creditData": creditData, "debitCategory": debitCategory, "creditCategory": creditCategory, "debitTotal": debitTotal, "creditTotal": creditTotal, "creditAccounts": creditAccounts, "debitAccounts": debitAccounts})
 
 # creating new accounts and showing account data
 @login_required(login_url="/login/")
@@ -320,3 +317,19 @@ def search(response):
     
     # if url typed on page
     return redirect('/')
+
+# display profile page
+@login_required(login_url="/login/")
+def profile(response):
+    # update currency used
+    if response.method == 'POST':
+        form = ChangeCurrency(response.POST)
+        if form.is_valid():
+            symbol = form.cleaned_data['currency']
+            response.user.profile.currency = symbol
+            response.user.profile.save()
+        return redirect('/')
+    else:
+        form = ChangeCurrency()
+
+    return render(response, "main/profile.html", {"form": form})

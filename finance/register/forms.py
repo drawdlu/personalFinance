@@ -34,18 +34,3 @@ class SetPasswordForm(SetPasswordForm):
 class PasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         super(PasswordResetForm, self).__init__(*args, **kwargs)
-
-
-class ChangeCurrency(forms.Form):
-    currency_choices = (
-        ("", "--------"),
-        ("$", "Dollar"), 
-        ("€", "Euro"), 
-        ("£", "Pound"),
-        ("¥", "Yen"),
-        ("₣", "Franc"),
-        ("₹", "Rupee"),
-        ("د. ك'", "Dinar"),
-        ("₱", "Peso")
-    )
-    currency = forms.ChoiceField(choices=currency_choices)
